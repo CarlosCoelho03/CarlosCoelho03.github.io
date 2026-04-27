@@ -6,7 +6,7 @@
   <title>Ficheiros das Equipas</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+ 
     :root {
       --bg: #0f0f0f;
       --surface: #1a1a1a;
@@ -23,7 +23,7 @@
       --radius: 14px;
       --radius-sm: 8px;
     }
-
+ 
     body {
       font-family: 'DM Sans', system-ui, sans-serif;
       background: var(--bg);
@@ -34,7 +34,7 @@
       justify-content: center;
       padding: 1.5rem;
     }
-
+ 
     /* Subtle grid background */
     body::before {
       content: '';
@@ -47,14 +47,14 @@
       pointer-events: none;
       z-index: 0;
     }
-
+ 
     .wrap {
       position: relative;
       z-index: 1;
       width: 100%;
       max-width: 440px;
     }
-
+ 
     /* ── Header ── */
     .header {
       text-align: center;
@@ -82,7 +82,7 @@
       font-size: 14px;
       color: var(--muted);
     }
-
+ 
     /* ── Steps ── */
     .steps {
       display: flex;
@@ -102,7 +102,7 @@
       border-radius: 3px;
       background: var(--accent);
     }
-
+ 
     /* ── Cards ── */
     .card {
       background: var(--surface);
@@ -111,7 +111,7 @@
       padding: 1.25rem;
       margin-bottom: .75rem;
     }
-
+ 
     /* ── Team grid ── */
     .team-grid {
       display: grid;
@@ -137,7 +137,7 @@
     .team-btn .icon { font-size: 22px; margin-bottom: .5rem; display: block; }
     .team-btn .name { font-size: 13px; font-weight: 500; }
     .team-btn .label { font-size: 11px; color: var(--muted); margin-top: 2px; }
-
+ 
     /* ── Primary button ── */
     .btn-primary {
       width: 100%;
@@ -155,7 +155,7 @@
     .btn-primary:hover { opacity: .88; }
     .btn-primary:active { transform: scale(0.98); }
     .btn-primary:disabled { opacity: .35; cursor: not-allowed; }
-
+ 
     /* ── Back button ── */
     .btn-back {
       background: none;
@@ -171,7 +171,7 @@
       transition: color .15s;
     }
     .btn-back:hover { color: var(--text); }
-
+ 
     /* ── Team badge ── */
     .team-badge {
       display: inline-flex;
@@ -186,11 +186,11 @@
       padding: 3px 10px;
       margin-bottom: .875rem;
     }
-
+ 
     /* ── Code input ── */
     .card h2 { font-size: 15px; font-weight: 600; margin-bottom: .25rem; }
     .card .hint { font-size: 13px; color: var(--muted); margin-bottom: 1rem; }
-
+ 
     .code-row {
       display: flex;
       gap: 8px;
@@ -222,7 +222,7 @@
       60%{transform:translateX(-4px)}
       80%{transform:translateX(4px)}
     }
-
+ 
     .code-row button {
       background: var(--surface2);
       border: 1px solid var(--border);
@@ -236,13 +236,13 @@
       white-space: nowrap;
     }
     .code-row button:hover { border-color: var(--border-hover); background: var(--border); }
-
+ 
     .error-msg {
       font-size: 12px;
       color: var(--error);
       margin-top: .5rem;
     }
-
+ 
     /* ── Success box ── */
     .success-box {
       background: var(--success-dim);
@@ -270,7 +270,7 @@
       transition: opacity .15s;
     }
     .btn-download:hover { opacity: .88; }
-
+ 
     /* ── Admin panel ── */
     .admin-toggle {
       text-align: center;
@@ -323,7 +323,7 @@
       padding-top: .875rem;
       border-top: 1px solid var(--border);
     }
-
+ 
     @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono&display=swap');
   </style>
 </head>
@@ -337,11 +337,11 @@
 //  CONFIGURAÇÃO — edita aqui os teus dados
 // ══════════════════════════════════════════════
 const TEAMS = [
-  { id: 1, name: "Equipa Camara Municipal", emoji: "🔴", code: "ALFA7", file: "pdfs/camara_municipal.pdf" },
-  { id: 2, name: "Equipa 2", emoji: "🔵", code: "BETA3", file: "pdfs/jovens.pdf" },
-  { id: 3, name: "Equipa 3", emoji: "🟢", code: "GAMA9", file: "pdfs/investidores.pdf" },
-  { id: 4, name: "Equipa 4", emoji: "🟡", code: "DELT2", file: "pdfs/proprietarios_AL.pdf" },
-  { id: 5, name: "Equipa 5", emoji: "🟣", code: "EPSL6", file: "pdfs/grupo_hoteleiro.pdf" },
+  { id: 1, name: "Equipa da Camara Municipal", emoji: "🔴", code: "ALFA7", file: "pdfs/camara_municipal.pdf" },
+  { id: 2, name: "Equipa de Jovens", emoji: "🔵", code: "JOV3M", file: "pdfs/jovens.pdf" },
+  { id: 3, name: "Equipa dos Investidores", emoji: "🟢", code: "INVMD", file: "pdfs/investidores.pdf" },
+  { id: 4, name: "Equipa dos Proprietários de AL", emoji: "🟡", code: "PROAL", file: "pdfs/proprietarios_AL.pdf" },
+  { id: 5, name: "Equipa dos Grupos Hoteleiros", emoji: "🟣", code: "GRHOT", file: "pdfs/grupo_hoteleiro.pdf" },
 ];
 // ══════════════════════════════════════════════
 
