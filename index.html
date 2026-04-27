@@ -1,477 +1,486 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <title>Gerar QR Code - Sunset JSD</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ficheiros das Equipas</title>
   <style>
-    * {
-      box-sizing: border-box;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f0f0f;
+      --surface: #1a1a1a;
+      --surface2: #222;
+      --border: rgba(255,255,255,0.08);
+      --border-hover: rgba(255,255,255,0.18);
+      --text: #f0f0f0;
+      --muted: #888;
+      --accent: #4f8ef7;
+      --accent-dim: rgba(79,142,247,0.12);
+      --success: #22c97a;
+      --success-dim: rgba(34,201,122,0.1);
+      --error: #f25c5c;
+      --radius: 14px;
+      --radius-sm: 8px;
     }
 
     body {
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, #f3904f, #ff5733);
-      color: white;
-      font-family: 'Montserrat', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    /* Subtle grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 440px;
+    }
+
+    /* ── Header ── */
+    .header {
       text-align: center;
-      flex-direction: column;
-      padding: 20px;
+      margin-bottom: 2rem;
+    }
+    .header .logo {
+      width: 48px;
+      height: 48px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(79,142,247,0.25);
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 1rem;
+    }
+    .header h1 {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: .375rem;
+    }
+    .header p {
+      font-size: 14px;
+      color: var(--muted);
     }
 
+    /* ── Steps ── */
+    .steps {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: center;
+      margin-bottom: 1.75rem;
+    }
+    .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--border-hover);
+      transition: all .3s;
+    }
+    .dot.active {
+      width: 20px;
+      border-radius: 3px;
+      background: var(--accent);
+    }
+
+    /* ── Cards ── */
     .card {
-      background-color: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      padding: 40px 30px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-      max-width: 450px;
-      width: 100%;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      animation: slideIn 0.5s ease-out;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin-bottom: .75rem;
     }
 
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    /* ── Team grid ── */
+    .team-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 1rem;
     }
-
-    h1 {
-      font-size: clamp(24px, 6vw, 36px);
-      margin-bottom: 30px;
-      font-weight: 700;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-      text-align: left;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      font-size: clamp(14px, 3.5vw, 16px);
-    }
-
-    input {
-      width: 100%;
-      padding: 15px;
-      border-radius: 12px;
-      border: none;
-      background-color: rgba(255, 255, 255, 0.9);
-      font-size: clamp(14px, 4vw, 16px);
-      color: #333;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
-    }
-
-    input:focus {
-      outline: none;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 0 0 3px rgba(255, 255, 255, 0.3);
-      transform: scale(1.02);
-    }
-
-    input::placeholder {
-      color: #666;
-    }
-
-    button {
-      width: 100%;
-      background: linear-gradient(45deg, #fff, #f0f0f0);
-      color: #ff5733;
-      padding: 18px;
-      border: none;
-      border-radius: 12px;
-      font-weight: bold;
+    .team-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: .875rem;
       cursor: pointer;
-      font-size: clamp(14px, 4vw, 18px);
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
-      margin-top: 10px;
+      text-align: left;
+      transition: border-color .15s, background .15s;
+      color: var(--text);
     }
-
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.4);
+    .team-btn:hover { border-color: var(--border-hover); }
+    .team-btn.selected {
+      border-color: var(--accent);
+      background: var(--accent-dim);
     }
+    .team-btn .icon { font-size: 22px; margin-bottom: .5rem; display: block; }
+    .team-btn .name { font-size: 13px; font-weight: 500; }
+    .team-btn .label { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
-    button:active {
-      transform: translateY(0);
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    #qrSection {
-      margin-top: 30px;
-      padding-top: 30px;
-      border-top: 2px solid rgba(255, 255, 255, 0.2);
-    }
-
-    #qrCode {
-      background: white;
-      padding: 20px;
-      border-radius: 16px;
-      margin: 20px auto;
-      display: inline-block;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .success-message {
-      background-color: rgba(34, 197, 94, 0.2);
-      border: 2px solid rgba(34, 197, 94, 0.5);
-      padding: 15px;
-      border-radius: 12px;
-      margin-bottom: 20px;
+    /* ── Primary button ── */
+    .btn-primary {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: .75rem;
+      font-size: 14px;
       font-weight: 600;
-      animation: fadeIn 0.5s ease-out;
+      cursor: pointer;
+      transition: opacity .15s, transform .1s;
+      letter-spacing: .01em;
+    }
+    .btn-primary:hover { opacity: .88; }
+    .btn-primary:active { transform: scale(0.98); }
+    .btn-primary:disabled { opacity: .35; cursor: not-allowed; }
+
+    /* ── Back button ── */
+    .btn-back {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 1.25rem;
+      padding: 0;
+      transition: color .15s;
+    }
+    .btn-back:hover { color: var(--text); }
+
+    /* ── Team badge ── */
+    .team-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid rgba(79,142,247,0.2);
+      border-radius: 20px;
+      padding: 3px 10px;
+      margin-bottom: .875rem;
     }
 
-    .error-message {
-      background-color: rgba(239, 68, 68, 0.2);
-      border: 2px solid rgba(239, 68, 68, 0.5);
-      padding: 15px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      font-weight: 600;
-      animation: shake 0.5s ease-out;
-    }
+    /* ── Code input ── */
+    .card h2 { font-size: 15px; font-weight: 600; margin-bottom: .25rem; }
+    .card .hint { font-size: 13px; color: var(--muted); margin-bottom: 1rem; }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .code-row {
+      display: flex;
+      gap: 8px;
     }
-
+    .code-row input {
+      flex: 1;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 20px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      text-align: center;
+      padding: .625rem .5rem;
+      outline: none;
+      transition: border-color .15s;
+    }
+    .code-row input:focus { border-color: var(--accent); }
+    .code-row input.shake {
+      animation: shake .35s ease;
+      border-color: var(--error);
+    }
     @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
+      0%,100%{transform:translateX(0)}
+      20%{transform:translateX(-6px)}
+      40%{transform:translateX(6px)}
+      60%{transform:translateX(-4px)}
+      80%{transform:translateX(4px)}
     }
 
-    .instructions {
-      font-size: clamp(12px, 3vw, 14px);
-      margin-top: 15px;
-      opacity: 0.9;
-      line-height: 1.4;
+    .code-row button {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 0 1rem;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+      white-space: nowrap;
     }
+    .code-row button:hover { border-color: var(--border-hover); background: var(--border); }
 
-    .warning-box {
-      background-color: rgba(255, 193, 7, 0.2);
-      border: 2px solid rgba(255, 193, 7, 0.6);
-      padding: 15px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      font-size: 14px;
-    }
-
-    .url-display {
-      background-color: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 12px;
-      border-radius: 8px;
-      margin: 15px 0;
-      font-family: monospace;
+    .error-msg {
       font-size: 12px;
-      word-break: break-all;
-      color: rgba(255, 255, 255, 0.8);
+      color: var(--error);
+      margin-top: .5rem;
     }
 
-    .copy-btn {
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      padding: 8px 16px;
+    /* ── Success box ── */
+    .success-box {
+      background: var(--success-dim);
+      border: 1px solid rgba(34,201,122,0.2);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+    .success-box p { font-size: 13px; color: var(--success); margin-bottom: .75rem; }
+    .btn-download {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      background: var(--success);
+      color: #0a1f14;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: .75rem;
       font-size: 14px;
-      margin: 5px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity .15s;
     }
+    .btn-download:hover { opacity: .88; }
 
-    .debug-section {
-      background-color: rgba(0, 0, 0, 0.1);
-      padding: 15px;
-      border-radius: 8px;
-      margin-top: 20px;
+    /* ── Admin panel ── */
+    .admin-toggle {
+      text-align: center;
+      margin-top: 2rem;
+      color: var(--border-hover);
+      font-size: 18px;
+      cursor: pointer;
+      letter-spacing: 4px;
+      transition: color .15s;
+      user-select: none;
+    }
+    .admin-toggle:hover { color: var(--muted); }
+    .admin-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin-top: .75rem;
+    }
+    .admin-panel h3 {
       font-size: 12px;
-      font-family: monospace;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    .admin-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: .625rem;
+      font-size: 13px;
+    }
+    .admin-row .team-name { flex: 1; color: var(--text); }
+    .code-pill {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 2px 8px;
+      color: var(--accent);
+      letter-spacing: .1em;
+    }
+    .admin-note {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: .875rem;
+      padding-top: .875rem;
+      border-top: 1px solid var(--border);
     }
 
-    @media (max-width: 480px) {
-      .card {
-        padding: 30px 20px;
-      }
-    }
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono&display=swap');
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>🌅 Sunset JSD 🍹</h1>
-    
-    <form id="formulario">
-      <div class="form-group">
-        <label for="nome">Nome Completo</label>
-        <input type="text" id="nome" placeholder="O teu nome completo" required />
-      </div>
-      
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" placeholder="exemplo@email.com" required />
-      </div>
-      
-      <button type="submit" id="submitBtn">🎫 Gerar QR Code</button>
-    </form>
+<div class="wrap">
+  <div id="app"></div>
+</div>
 
-    <div id="message"></div>
+<script>
+// ══════════════════════════════════════════════
+//  CONFIGURAÇÃO — edita aqui os teus dados
+// ══════════════════════════════════════════════
+const TEAMS = [
+  { id: 1, name: "Equipa 1", emoji: "🔴", code: "ALFA7", file: "pdfs/equipa1.pdf" },
+  { id: 2, name: "Equipa 2", emoji: "🔵", code: "BETA3", file: "pdfs/equipa2.pdf" },
+  { id: 3, name: "Equipa 3", emoji: "🟢", code: "GAMA9", file: "pdfs/equipa3.pdf" },
+  { id: 4, name: "Equipa 4", emoji: "🟡", code: "DELT2", file: "pdfs/equipa4.pdf" },
+  { id: 5, name: "Equipa 5", emoji: "🟣", code: "EPSL6", file: "pdfs/equipa5.pdf" },
+];
+// ══════════════════════════════════════════════
 
-    <div id="qrSection" class="hidden">
-      <h2>🎉 QR Code Gerado!</h2>
-      
-      <div class="warning-box">
-        ⚠️ <strong>Importante:</strong> Este QR Code funciona em qualquer dispositivo! Não precisa ser o mesmo onde foi criado.
+let state = { screen: "pick", selected: null, codeVal: "", error: "", unlocked: false, adminOpen: false };
+
+function render() {
+  document.getElementById("app").innerHTML =
+    state.screen === "pick" ? renderPick() : renderCode();
+  attach();
+}
+
+function renderPick() {
+  return `
+    <div class="header">
+      <div class="logo">📁</div>
+      <h1>Ficheiros das Equipas</h1>
+      <p>Escolhe a tua equipa e insere o código secreto</p>
+    </div>
+    <div class="steps">
+      <div class="dot active"></div>
+      <div class="dot"></div>
+    </div>
+    <div class="card">
+      <div class="team-grid">
+        ${TEAMS.map(t => `
+          <button class="team-btn${state.selected === t.id ? " selected" : ""}" data-id="${t.id}">
+            <span class="icon">${t.emoji}</span>
+            <span class="name">${t.name}</span>
+            <span class="label">PDF disponível</span>
+          </button>
+        `).join("")}
       </div>
-      
-      <div id="qrCode"></div>
-      
-      <div class="url-display" id="urlDisplay"></div>
-      
-      <button id="copyUrlBtn" class="copy-btn">📋 Copiar Link</button>
-      <button id="downloadBtn">📱 Guardar QR Code</button>
-      <button id="testBtn" style="background: rgba(34, 197, 94, 0.3); color: white; margin-top: 10px;">🧪 Testar QR Code</button>
-      
-  
-      
-      <p class="instructions">
-        💡 <strong>Guarda este QR Code!</strong><br>
-        Mostra-o no evento para resgatar a tua bebida grátis.<br>
-        <small>Funciona em qualquer telemóvel ou tablet!</small>
+      <button class="btn-primary" id="continueBtn" ${!state.selected ? "disabled" : ""}>
+        Continuar →
+      </button>
+    </div>
+    <div class="admin-toggle" id="adminToggle">· · ·</div>
+    ${state.adminOpen ? renderAdmin() : ""}
+  `;
+}
+
+function renderAdmin() {
+  return `
+    <div class="admin-panel">
+      <h3>Painel do organizador</h3>
+      ${TEAMS.map(t => `
+        <div class="admin-row">
+          <span>${t.emoji}</span>
+          <span class="team-name">${t.name}</span>
+          <span class="code-pill">${t.code}</span>
+        </div>
+      `).join("")}
+      <p class="admin-note">
+        Partilha cada código apenas com a equipa respetiva.<br>
+        Os PDFs devem estar em: <code style="color:var(--accent)">pdfs/equipaN.pdf</code>
       </p>
     </div>
-  </div>
+  `;
+}
 
-  <script>
-    const formulario = document.getElementById('formulario');
-    const qrSection = document.getElementById('qrSection');
-    const qrCodeDiv = document.getElementById('qrCode');
-    const messageDiv = document.getElementById('message');
-    const submitBtn = document.getElementById('submitBtn');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const testBtn = document.getElementById('testBtn');
-    const copyUrlBtn = document.getElementById('copyUrlBtn');
-    const urlDisplay = document.getElementById('urlDisplay');
+function renderCode() {
+  const t = TEAMS.find(x => x.id === state.selected);
+  return `
+    <div class="header">
+      <div class="logo">🔑</div>
+      <h1>Código de acesso</h1>
+      <p>Insere o código para desbloquear o teu ficheiro</p>
+    </div>
+    <div class="steps">
+      <div class="dot"></div>
+      <div class="dot active"></div>
+    </div>
+    <button class="btn-back" id="backBtn">← Voltar</button>
+    <div class="card">
+      <div class="team-badge">${t.emoji} ${t.name}</div>
+      <h2>Código secreto</h2>
+      <p class="hint">Introduz o código de 5 letras fornecido pelo organizador.</p>
+      <div class="code-row">
+        <input id="codeInput" maxlength="5" placeholder="·····" autocomplete="off"
+          value="${state.codeVal}" spellcheck="false" />
+        <button id="checkBtn">Verificar</button>
+      </div>
+      ${state.error ? `<p class="error-msg">${state.error}</p>` : ""}
+      ${state.unlocked ? `
+        <div class="success-box">
+          <p>✓ Código correto! O teu ficheiro está pronto.</p>
+          <a class="btn-download" href="${t.file}" download="${t.file.split('/').pop()}">
+            ⬇ Descarregar ${t.name} PDF
+          </a>
+        </div>
+      ` : ""}
+    </div>
+  `;
+}
 
-    let currentQRUrl = '';
+function attach() {
+  document.querySelectorAll(".team-btn").forEach(btn => {
+    btn.onclick = () => { state.selected = parseInt(btn.dataset.id); render(); };
+  });
 
-    function showMessage(msg, type = 'success') {
-      messageDiv.innerHTML = `<div class="${type}-message">${msg}</div>`;
-      setTimeout(() => messageDiv.innerHTML = '', 5000);
-    }
+  const cont = document.getElementById("continueBtn");
+  if (cont) cont.onclick = () => {
+    if (state.selected) { state.screen = "code"; state.error = ""; state.unlocked = false; render(); }
+  };
 
-    function isValidEmail(email) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailRegex.test(email);
-    }
+  const back = document.getElementById("backBtn");
+  if (back) back.onclick = () => { state.screen = "pick"; render(); };
 
-    function encodeUserData(nome, email) {
-      const userData = {
-        nome: nome,
-        email: email,
-        timestamp: Date.now(),
-        usado: false,
-        version: '3.0'
-      };
-      
-      try {
-        // CORREÇÃO: Ordem correta de codificação
-        const jsonString = JSON.stringify(userData);
-        console.log('1. JSON original:', jsonString);
-        
-        // Primeiro encode URI, depois base64
-        const uriEncoded = encodeURIComponent(jsonString);
-        console.log('2. URI encoded:', uriEncoded);
-        
-        const base64Encoded = btoa(uriEncoded);
-        console.log('3. Base64 encoded:', base64Encoded);
-        
-        // Teste de decodificação imediata
-        const testDecoded = decodeURIComponent(atob(base64Encoded));
-        const testParsed = JSON.parse(testDecoded);
-        console.log('4. Teste de decodificação:', testParsed);
-        
-        if (testParsed.nome !== nome || testParsed.email !== email) {
-          throw new Error('Falha no teste de codificação/decodificação');
-        }
-        
-        return base64Encoded;
-      } catch (error) {
-        console.error('Erro ao codificar dados:', error);
-        throw error;
-      }
-    }
+  const adm = document.getElementById("adminToggle");
+  if (adm) adm.onclick = () => { state.adminOpen = !state.adminOpen; render(); };
 
-    function getBaseUrl() {
-      const protocol = window.location.protocol;
-      const host = window.location.host;
-      const pathname = window.location.pathname;
-      
-      // Remove o ficheiro atual e fica só com o diretório
-      const basePath = pathname.replace(/\/[^\/]*$/, '');
-      const baseUrl = `${protocol}//${host}${basePath}`;
-      
-      console.log('Base URL detectada:', baseUrl);
-      return baseUrl;
-    }
+  const inp = document.getElementById("codeInput");
+  if (inp) {
+    inp.focus();
+    inp.oninput = () => { state.codeVal = inp.value.toUpperCase(); inp.value = state.codeVal; };
+    inp.onkeydown = e => { if (e.key === "Enter") check(); };
+  }
 
-    formulario.addEventListener('submit', (e) => {
-      e.preventDefault();
-      
-      const nome = document.getElementById('nome').value.trim();
-      const email = document.getElementById('email').value.trim().toLowerCase();
+  const chk = document.getElementById("checkBtn");
+  if (chk) chk.onclick = check;
+}
 
-      // Validações
-      if (!nome || nome.length < 2) {
-        showMessage('❌ Por favor, insere um nome válido (pelo menos 2 caracteres).', 'error');
-        return;
-      }
+function check() {
+  const t = TEAMS.find(x => x.id === state.selected);
+  const val = (document.getElementById("codeInput")?.value || "").toUpperCase().trim();
+  state.codeVal = val;
+  if (val === t.code) {
+    state.unlocked = true;
+    state.error = "";
+  } else {
+    state.unlocked = false;
+    state.error = "Código incorreto. Tenta novamente.";
+    const inp = document.getElementById("codeInput");
+    if (inp) { inp.classList.add("shake"); setTimeout(() => inp.classList.remove("shake"), 400); }
+  }
+  render();
+}
 
-      if (!isValidEmail(email)) {
-        showMessage('❌ Por favor, insere um email válido.', 'error');
-        return;
-      }
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = '⏳ A gerar...';
-
-      setTimeout(() => {
-        try {
-          const token = encodeUserData(nome, email);
-          generateQRCode(token, nome, email);
-          showMessage('✅ QR Code gerado com sucesso!', 'success');
-          
-        } catch (error) {
-          console.error('Erro:', error);
-          showMessage('❌ Erro ao gerar QR Code. Tenta novamente.', 'error');
-        } finally {
-          submitBtn.disabled = false;
-          submitBtn.textContent = '🎫 Gerar QR Code';
-        }
-      }, 500);
-    });
-
-    function generateQRCode(token, nome, email) {
-      try {
-        const baseUrl = getBaseUrl();
-        // Usar nome do arquivo de verificação explícito
-        const verifyUrl = `${baseUrl}/verificar.html?token=${token}`;
-        
-        currentQRUrl = verifyUrl;
-        console.log('QR URL gerada:', verifyUrl);
-
-
-        // Limpar QR Code anterior
-        qrCodeDiv.innerHTML = '';
-
-        // Gerar QR Code
-        const qr = new QRious({
-          element: document.createElement('canvas'),
-          value: verifyUrl,
-          size: 300,
-          background: 'white',
-          foreground: '#ff5733',
-          level: 'H',
-          padding: 20
-        });
-
-        qrCodeDiv.appendChild(qr.canvas);
-        qrSection.classList.remove('hidden');
-
-        // Scroll suave para o QR Code
-        setTimeout(() => {
-          qrSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 300);
-
-      } catch (error) {
-        console.error('Erro ao gerar QR:', error);
-        showMessage('❌ Erro ao gerar QR Code visual.', 'error');
-      }
-    }
-
-    // Copiar URL
-    copyUrlBtn.addEventListener('click', async () => {
-      try {
-        if (navigator.clipboard) {
-          await navigator.clipboard.writeText(currentQRUrl);
-          showMessage('📋 Link copiado!', 'success');
-        } else {
-          const textArea = document.createElement('textarea');
-          textArea.value = currentQRUrl;
-          document.body.appendChild(textArea);
-          textArea.select();
-          document.execCommand('copy');
-          document.body.removeChild(textArea);
-          showMessage('📋 Link copiado!', 'success');
-        }
-      } catch (error) {
-        console.error('Erro ao copiar:', error);
-        showMessage('❌ Erro ao copiar link.', 'error');
-      }
-    });
-
-    // Download do QR Code
-    downloadBtn.addEventListener('click', () => {
-      const canvas = qrCodeDiv.querySelector('canvas');
-      if (canvas) {
-        try {
-          const link = document.createElement('a');
-          const timestamp = new Date().toISOString().slice(0, 10);
-          link.download = `qr-code-jsd-sunset-${timestamp}.png`;
-          link.href = canvas.toDataURL('image/png', 1.0);
-          link.click();
-          showMessage('📱 QR Code guardado nos Downloads!', 'success');
-        } catch (error) {
-          console.error('Erro ao fazer download:', error);
-          showMessage('❌ Erro ao guardar QR Code.', 'error');
-        }
-      }
-    });
-
-    // Testar QR Code
-    testBtn.addEventListener('click', () => {
-      if (currentQRUrl) {
-        console.log('A testar URL:', currentQRUrl);
-        showMessage('🧪 A abrir página de teste...', 'success');
-        
-        const newWindow = window.open(currentQRUrl, '_blank');
-        
-        if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-          showMessage('⚠️ Pop-up bloqueado. Copia o link acima e abre numa nova aba.', 'error');
-        }
-      } else {
-        showMessage('❌ Nenhum QR Code gerado ainda.', 'error');
-      }
-    });
-
-    console.log('Sistema QR JSD carregado - Versão Corrigida 3.0!');
-    console.log('URL atual:', window.location.href);
-    console.log('Base URL que será usada:', getBaseUrl());
-  </script>
+render();
+</script>
 </body>
 </html>
