@@ -1,599 +1,193 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ficheiros das Equipas</title>
-  <style>
-    /* Base continua igual (mobile-first) */
-
-.wrap {
-  width: 100%;
-  max-width: 440px;
-  margin: 0 auto;
-}
-
-/* Ajustes globais para mobile pequeno */
-@media (max-width: 360px) {
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Para a minha Passenger Princess</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
   body {
-    padding: 1rem;
+    font-family: Georgia, 'Times New Roman', serif;
+    background: linear-gradient(160deg, #1E1533 0%, #2C1E4A 45%, #3C2B5C 100%);
+    color: #F3F1FC;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
   }
-
-  .header h1 {
-    font-size: 18px;
+  .hearts-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
   }
-
-  .header p {
-    font-size: 12px;
+  .heart-still {
+    position: absolute;
+    opacity: 0.10;
   }
-
-  .team-btn {
-    padding: .75rem;
+  .section {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px max(28px, env(safe-area-inset-left)) 48px max(28px, env(safe-area-inset-right));
+    text-align: center;
   }
-
-  .team-btn .icon {
-    font-size: 18px;
+  .eyebrow {
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #E24B4A;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeIn 1s ease forwards 0.2s;
   }
-
-  .code-row input {
-    font-size: 16px;
-    letter-spacing: .15em;
+  .big-line {
+    font-size: clamp(21px, 5.5vw, 27px);
+    line-height: 1.65;
+    max-width: 480px;
+    color: #F3F1FC;
+    opacity: 0;
+    animation: fadeIn 1.1s ease forwards 0.5s;
   }
-}
-
-/* Mobile normal */
-@media (min-width: 361px) and (max-width: 480px) {
-  .wrap {
-    max-width: 100%;
+  .big-line.two { animation-delay: 1.6s; }
+  .big-line.three { animation-delay: 2.9s; }
+  @keyframes fadeIn {
+    to { opacity: 1; }
   }
-
-  .team-grid {
-    grid-template-columns: 1fr 1fr;
+  .scroll-hint {
+    position: absolute;
+    bottom: max(32px, env(safe-area-inset-bottom));
+    font-size: 13px;
+    color: #AFA9EC;
+    opacity: 0;
+    animation: fadeIn 1s ease forwards 3.8s, bob 1.8s ease-in-out infinite 3.8s;
   }
-}
-
-/* Tablets */
-@media (min-width: 481px) and (max-width: 768px) {
-  .wrap {
-    max-width: 520px;
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
   }
-
-  .team-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+  .photo-frame {
+    width: min(320px, 78vw);
+    height: min(320px, 78vw);
+    border-radius: 22px;
+    border: 3px solid #E24B4A;
+    background: #251A3D;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+    overflow: hidden;
   }
-
-  .card {
-    padding: 1.5rem;
+  .photo-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
-}
-
-/* Desktop pequeno */
-@media (min-width: 769px) {
-  .wrap {
-    max-width: 440px;
+  .photo-placeholder {
+    color: #7F77DD;
+    font-family: Georgia, serif;
+    font-size: 14px;
+    padding: 20px;
+    line-height: 1.6;
   }
-}
-
-/* Melhorias fluidas gerais */
-.header h1 {
-  font-size: clamp(18px, 2.5vw, 22px);
-}
-
-.header p {
-  font-size: clamp(12px, 2vw, 14px);
-}
-
-.card {
-  padding: clamp(1rem, 2vw, 1.25rem);
-}
-
-.team-btn {
-  padding: clamp(.7rem, 2vw, .875rem);
-}
-
-.code-row input {
-  font-size: clamp(16px, 4vw, 20px);
-}
-
-/* Evitar overflow em inputs */
-.code-row {
-  flex-wrap: wrap;
-}
-
-.code-row input {
-  min-width: 0;
-}
-
-.code-row button {
-  flex-shrink: 0;
-}
-
-/* Botões sempre clicáveis em mobile */
-button {
-  min-height: 44px;
-}
-
-/* Scroll seguro em ecrãs pequenos */
-body {
-  overflow-x: hidden;
-}
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
-    :root {
-      --bg: #0f0f0f;
-      --surface: #1a1a1a;
-      --surface2: #222;
-      --border: rgba(255,255,255,0.08);
-      --border-hover: rgba(255,255,255,0.18);
-      --text: #f0f0f0;
-      --muted: #888;
-      --accent: #4f8ef7;
-      --accent-dim: rgba(79,142,247,0.12);
-      --success: #22c97a;
-      --success-dim: rgba(34,201,122,0.1);
-      --error: #f25c5c;
-      --radius: 14px;
-      --radius-sm: 8px;
-    }
- 
-    body {
-      font-family: 'DM Sans', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-    }
- 
-    /* Subtle grid background */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
-      z-index: 0;
-    }
- 
-    .wrap {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 440px;
-    }
- 
-    /* ── Header ── */
-    .header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    .header .logo {
-      width: 48px;
-      height: 48px;
-      background: var(--accent-dim);
-      border: 1px solid rgba(79,142,247,0.25);
-      border-radius: 14px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      margin-bottom: 1rem;
-    }
-    .header h1 {
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      margin-bottom: .375rem;
-    }
-    .header p {
-      font-size: 14px;
-      color: var(--muted);
-    }
- 
-    /* ── Steps ── */
-    .steps {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      justify-content: center;
-      margin-bottom: 1.75rem;
-    }
-    .dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--border-hover);
-      transition: all .3s;
-    }
-    .dot.active {
-      width: 20px;
-      border-radius: 3px;
-      background: var(--accent);
-    }
- 
-    /* ── Cards ── */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.25rem;
-      margin-bottom: .75rem;
-    }
- 
-    /* ── Team grid ── */
-    .team-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 1rem;
-    }
-    .team-btn {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: .875rem;
-      cursor: pointer;
-      text-align: left;
-      transition: border-color .15s, background .15s;
-      color: var(--text);
-    }
-    .team-btn:hover { border-color: var(--border-hover); }
-    .team-btn.selected {
-      border-color: var(--accent);
-      background: var(--accent-dim);
-    }
-    .team-btn .icon { font-size: 22px; margin-bottom: .5rem; display: block; }
-    .team-btn .name { font-size: 13px; font-weight: 500; }
-    .team-btn .label { font-size: 11px; color: var(--muted); margin-top: 2px; }
- 
-    /* ── Primary button ── */
-    .btn-primary {
-      width: 100%;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: var(--radius-sm);
-      padding: .75rem;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity .15s, transform .1s;
-      letter-spacing: .01em;
-    }
-    .btn-primary:hover { opacity: .88; }
-    .btn-primary:active { transform: scale(0.98); }
-    .btn-primary:disabled { opacity: .35; cursor: not-allowed; }
- 
-    /* ── Back button ── */
-    .btn-back {
-      background: none;
-      border: none;
-      color: var(--muted);
-      font-size: 13px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      margin-bottom: 1.25rem;
-      padding: 0;
-      transition: color .15s;
-    }
-    .btn-back:hover { color: var(--text); }
- 
-    /* ── Team badge ── */
-    .team-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      font-weight: 500;
-      background: var(--accent-dim);
-      color: var(--accent);
-      border: 1px solid rgba(79,142,247,0.2);
-      border-radius: 20px;
-      padding: 3px 10px;
-      margin-bottom: .875rem;
-    }
- 
-    /* ── Code input ── */
-    .card h2 { font-size: 15px; font-weight: 600; margin-bottom: .25rem; }
-    .card .hint { font-size: 13px; color: var(--muted); margin-bottom: 1rem; }
- 
-    .code-row {
-      display: flex;
-      gap: 8px;
-    }
-    .code-row input {
-      flex: 1;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text);
-      font-family: 'DM Mono', monospace;
-      font-size: 20px;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      text-align: center;
-      padding: .625rem .5rem;
-      outline: none;
-      transition: border-color .15s;
-    }
-    .code-row input:focus { border-color: var(--accent); }
-    .code-row input.shake {
-      animation: shake .35s ease;
-      border-color: var(--error);
-    }
-    @keyframes shake {
-      0%,100%{transform:translateX(0)}
-      20%{transform:translateX(-6px)}
-      40%{transform:translateX(6px)}
-      60%{transform:translateX(-4px)}
-      80%{transform:translateX(4px)}
-    }
- 
-    .code-row button {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text);
-      font-size: 13px;
-      font-weight: 500;
-      padding: 0 1rem;
-      cursor: pointer;
-      transition: border-color .15s, background .15s;
-      white-space: nowrap;
-    }
-    .code-row button:hover { border-color: var(--border-hover); background: var(--border); }
- 
-    .error-msg {
-      font-size: 12px;
-      color: var(--error);
-      margin-top: .5rem;
-    }
- 
-    /* ── Success box ── */
-    .success-box {
-      background: var(--success-dim);
-      border: 1px solid rgba(34,201,122,0.2);
-      border-radius: var(--radius-sm);
-      padding: 1rem;
-      margin-top: 1rem;
-    }
-    .success-box p { font-size: 13px; color: var(--success); margin-bottom: .75rem; }
-    .btn-download {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      background: var(--success);
-      color: #0a1f14;
-      border: none;
-      border-radius: var(--radius-sm);
-      padding: .75rem;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      text-decoration: none;
-      transition: opacity .15s;
-    }
-    .btn-download:hover { opacity: .88; }
- 
-    /* ── Admin panel ── */
-    .admin-toggle {
-      text-align: center;
-      margin-top: 2rem;
-      color: var(--border-hover);
-      font-size: 18px;
-      cursor: pointer;
-      letter-spacing: 4px;
-      transition: color .15s;
-      user-select: none;
-    }
-    .admin-toggle:hover { color: var(--muted); }
-    .admin-panel {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.25rem;
-      margin-top: .75rem;
-    }
-    .admin-panel h3 {
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      color: var(--muted);
-      margin-bottom: 1rem;
-    }
-    .admin-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: .625rem;
-      font-size: 13px;
-    }
-    .admin-row .team-name { flex: 1; color: var(--text); }
-    .code-pill {
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      padding: 2px 8px;
-      color: var(--accent);
-      letter-spacing: .1em;
-    }
-    .admin-note {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: .875rem;
-      padding-top: .875rem;
-      border-top: 1px solid var(--border);
-    }
- 
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono&display=swap');
-  </style>
+  .name {
+    font-size: 20px;
+    color: #AFA9EC;
+    margin-bottom: 12px;
+  }
+  .question {
+    font-size: clamp(26px, 7vw, 34px);
+    color: #FFFFFF;
+    line-height: 1.4;
+    max-width: 420px;
+  }
+  .final-heart {
+    margin-top: 34px;
+    animation: beat 1.6s ease-in-out infinite;
+    transform-origin: center;
+  }
+  @keyframes beat {
+    0%, 100% { transform: scale(1); }
+    15% { transform: scale(1.14); }
+    30% { transform: scale(1); }
+    45% { transform: scale(1.08); }
+    60% { transform: scale(1); }
+  }
+</style>
 </head>
 <body>
-<div class="wrap">
-  <div id="app"></div>
+
+<div class="hearts-bg" id="heartsBg"></div>
+
+<div class="section">
+  <p class="eyebrow">para a minha passenger princess</p>
+  <p class="big-line one">Sabes, há pessoas que entram na nossa vida devagar.</p>
+</div>
+
+<div class="section">
+  <p class="big-line two">E há outras que chegam como tu chegaste — de repente tudo fez mais sentido, tudo ficou mais leve, mais colorido.</p>
+</div>
+
+<div class="section">
+  <p class="big-line three">Contigo até os dias mais banais parecem valer a pena. Por isso, antes de continuares a ler, quero que saibas uma coisa simples e verdadeira: gosto muito de ti.</p>
+  <p class="scroll-hint">continua a descer ↓</p>
+</div>
+
+<div class="section">
+  <div class="photo-frame">
+    <img id="foto-casal" src="" alt="Foto do casal" style="display:none;">
+    <div class="photo-placeholder" id="foto-placeholder">
+      [ substitui esta div pela vossa foto ]<br><br>
+      troca a linha:<br>
+      &lt;img id="foto-casal" src=""&gt;<br>
+      pelo caminho da tua foto, ex:<br>
+      src="foto.jpg"
+    </div>
+  </div>
+  <p class="name">e agora, Passenger Princess...</p>
+  <p class="question">queres namorar comigo?</p>
+  <svg class="final-heart" width="56" height="50" viewBox="0 0 80 72">
+    <path d="M40 66 C40 66, 6 42, 6 20 C6 7, 17 0, 27 0 C34 0, 40 5, 40 12 C40 5, 46 0, 53 0 C63 0, 74 7, 74 20 C74 42, 40 66, 40 66 Z" fill="#E24B4A"/>
+  </svg>
 </div>
 
 <script>
-// ══════════════════════════════════════════════
-//  CONFIGURAÇÃO — edita aqui os teus dados
-// ══════════════════════════════════════════════
-const TEAMS = [
-  { id: 1, name: "Equipa da Camara Municipal", emoji: "🔴", code: "CMF26", file: "pdfs/camara_municipal.pdf" },
-  { id: 2, name: "Equipa de Jovens", emoji: "🔵", code: "JOV3M", file: "pdfs/jovens.pdf" },
-  { id: 3, name: "Equipa dos Investidores ", emoji: "🟢", code: "INVFN", file: "pdfs/investidores.pdf" },
-  { id: 4, name: "Equipa dos Proprietários de AL", emoji: "🟡", code: "PROAL", file: "pdfs/proprietarios_AL.pdf" },
-  { id: 5, name: "Equipa dos Grupos Hoteleiros", emoji: "🟣", code: "GRHOT", file: "pdfs/grupo_hoteleiro.pdf" },
+const fotoSrc = "";
+if (fotoSrc) {
+  const img = document.getElementById('foto-casal');
+  img.src = fotoSrc;
+  img.style.display = 'block';
+  document.getElementById('foto-placeholder').style.display = 'none';
+}
+
+const heartsBg = document.getElementById('heartsBg');
+const positions = [
+  {x:8, y:6, s:34, r:-12}, {x:82, y:14, s:26, r:18}, {x:18, y:32, s:22, r:8},
+  {x:70, y:40, s:38, r:-15}, {x:5, y:58, s:28, r:12}, {x:88, y:64, s:24, r:-10},
+  {x:30, y:78, s:30, r:15}, {x:60, y:88, s:26, r:-8}, {x:15, y:95, s:20, r:10},
+  {x:78, y:92, s:32, r:-14}
 ];
-// ══════════════════════════════════════════════
-
-let state = { screen: "pick", selected: null, codeVal: "", error: "", unlocked: false, adminOpen: false };
-
-function render() {
-  document.getElementById("app").innerHTML =
-    state.screen === "pick" ? renderPick() : renderCode();
-  attach();
-}
-
-function renderPick() {
-  return `
-    <div class="header">
-      <div class="logo">📁</div>
-      <h1>Ficheiros das Equipas</h1>
-      <p>Escolhe a tua equipa e insere o código secreto</p>
-    </div>
-    <div class="steps">
-      <div class="dot active"></div>
-      <div class="dot"></div>
-    </div>
-    <div class="card">
-      <div class="team-grid">
-        ${TEAMS.map(t => `
-          <button class="team-btn${state.selected === t.id ? " selected" : ""}" data-id="${t.id}">
-            <span class="icon">${t.emoji}</span>
-            <span class="name">${t.name}</span>
-            <span class="label">PDF disponível</span>
-          </button>
-        `).join("")}
-      </div>
-      <button class="btn-primary" id="continueBtn" ${!state.selected ? "disabled" : ""}>
-        Continuar →
-      </button>
-    </div>
-    <div class="admin-toggle" id="adminToggle">· · ·</div>
-    ${state.adminOpen ? renderAdmin() : ""}
-  `;
-}
-
-function renderAdmin() {
-  return `
-    <div class="admin-panel">
-      <h3>Painel do organizador</h3>
-      ${TEAMS.map(t => `
-        <div class="admin-row">
-          <span>${t.emoji}</span>
-          <span class="team-name">${t.name}</span>
-          <span class="code-pill">${t.code}</span>
-        </div>
-      `).join("")}
-      <p class="admin-note">
-        Partilha cada código apenas com a equipa respetiva.<br>
-        Os PDFs devem estar em: <code style="color:var(--accent)">pdfs/equipaN.pdf</code>
-      </p>
-    </div>
-  `;
-}
-
-function renderCode() {
-  const t = TEAMS.find(x => x.id === state.selected);
-  return `
-    <div class="header">
-      <div class="logo">🔑</div>
-      <h1>Código de acesso</h1>
-      <p>Insere o código para desbloquear o teu ficheiro</p>
-    </div>
-    <div class="steps">
-      <div class="dot"></div>
-      <div class="dot active"></div>
-    </div>
-    <button class="btn-back" id="backBtn">← Voltar</button>
-    <div class="card">
-      <div class="team-badge">${t.emoji} ${t.name}</div>
-      <h2>Código secreto</h2>
-      <p class="hint">Introduz o código de 5 letras fornecido pelo organizador.</p>
-      <div class="code-row">
-        <input id="codeInput" maxlength="5" placeholder="·····" autocomplete="off"
-          value="${state.codeVal}" spellcheck="false" />
-        <button id="checkBtn">Verificar</button>
-      </div>
-      ${state.error ? `<p class="error-msg">${state.error}</p>` : ""}
-      ${state.unlocked ? `
-        <div class="success-box">
-          <p>✓ Código correto! O teu ficheiro está pronto.</p>
-          <a class="btn-download" href="${t.file}" download="${t.file.split('/').pop()}">
-            ⬇ Descarregar ${t.name} PDF
-          </a>
-        </div>
-      ` : ""}
-    </div>
-  `;
-}
-
-function attach() {
-  document.querySelectorAll(".team-btn").forEach(btn => {
-    btn.onclick = () => { state.selected = parseInt(btn.dataset.id); render(); };
-  });
-
-  const cont = document.getElementById("continueBtn");
-  if (cont) cont.onclick = () => {
-    if (state.selected) { state.screen = "code"; state.error = ""; state.unlocked = false; render(); }
-  };
-
-  const back = document.getElementById("backBtn");
-  if (back) back.onclick = () => { state.screen = "pick"; render(); };
-
-  const adm = document.getElementById("adminToggle");
-  if (adm) adm.onclick = () => { state.adminOpen = !state.adminOpen; render(); };
-
-  const inp = document.getElementById("codeInput");
-  if (inp) {
-    inp.focus();
-    inp.oninput = () => { state.codeVal = inp.value.toUpperCase(); inp.value = state.codeVal; };
-    inp.onkeydown = e => { if (e.key === "Enter") check(); };
-  }
-
-  const chk = document.getElementById("checkBtn");
-  if (chk) chk.onclick = check;
-}
-
-function check() {
-  const t = TEAMS.find(x => x.id === state.selected);
-  const val = (document.getElementById("codeInput")?.value || "").toUpperCase().trim();
-  state.codeVal = val;
-  if (val === t.code) {
-    state.unlocked = true;
-    state.error = "";
-  } else {
-    state.unlocked = false;
-    state.error = "Código incorreto. Tenta novamente.";
-    const inp = document.getElementById("codeInput");
-    if (inp) { inp.classList.add("shake"); setTimeout(() => inp.classList.remove("shake"), 400); }
-  }
-  render();
-}
-
-render();
+positions.forEach(p => {
+  const el = document.createElement('div');
+  el.className = 'heart-still';
+  el.style.left = p.x + '%';
+  el.style.top = p.y + 'vh';
+  el.style.transform = 'rotate(' + p.r + 'deg)';
+  el.innerHTML = '<svg width="' + p.s + '" height="' + p.s*0.9 + '" viewBox="0 0 20 18"><path d="M10 17C10 17 1.5 11 1.5 5.5C1.5 2 4 0 6.5 0C8.3 0 10 1.3 10 3.3C10 1.3 11.7 0 13.5 0C16 0 18.5 2 18.5 5.5C18.5 11 10 17 10 17Z" fill="#AFA9EC"/></svg>';
+  heartsBg.appendChild(el);
+});
 </script>
+
 </body>
 </html>
