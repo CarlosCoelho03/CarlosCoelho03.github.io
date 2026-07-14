@@ -148,13 +148,15 @@
   <p class="big-line three">Contigo até as coisas mais simples valem a pena. Por isso, antes de continuares a ler, quero que saibas uma coisa simples e verdadeira: gosto muito de ti.</p>
   <p class="scroll-hint">continua a descer ↓</p>
 </div>
-
 <div class="section">
   <div class="photo-frame">
     <img id="foto-casal" src="" alt="Foto do casal" style="display:none;">
     <div class="photo-placeholder" id="foto-placeholder">
-      <br>
-      <img id="foto-casal" src="foto_casal.jpeg" alt="Foto do casal">
+      [ substitui esta div pela vossa foto ]<br><br>
+      troca a linha:<br>
+      &lt;img id="foto-casal" src=""&gt;<br>
+      pelo caminho da tua foto, ex:<br>
+      src="foto.jpg"
     </div>
   </div>
   <p class="name">e agora, Andrea de Sousa</p>
@@ -165,7 +167,7 @@
 </div>
 
 <script>
-const fotoSrc = "";
+const fotoSrc = "foto_casal.jpeg";
 if (fotoSrc) {
   const img = document.getElementById('foto-casal');
   img.src = fotoSrc;
